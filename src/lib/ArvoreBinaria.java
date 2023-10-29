@@ -26,10 +26,14 @@
 
         @Override
         public void adicionar(T novoValor) {
-            NoArvore<T> novoNo = new NoArvore<>(novoValor);
+            //Cria um novo nó, atribuindo o valor a adicionaro
+            No<T> novoNo = new No<>(novoValor);
+            //Se a raiz for nula, a raiz terá o novo nó.
             if (this.raiz == null) {
                 this.raiz = novoNo;
-            } else {
+            }
+            //Se não, chame a função recursiva de adicionar, dando a raiz e o novo nó.
+            else {
                 this.raiz = adicionarRecursivo(this.raiz, novoNo);
             } 
         }
@@ -39,18 +43,28 @@
          * @param atual - Elemento atual.
          * @param novo - Elemento a ser adicionado
          */
-        protected NoArvore<T> adicionarRecursivo(NoArvore<T> atual, NoArvore<T> novo) {
+        protected No<T> adicionarRecursivo(No<T> atual, No<T> novo) {
+            //Atribui um comparador entre o valor do novo nó e o valor do nó atual dado. 
             int comp = comparador.compare(novo.getValor(), atual.getValor());
+            //Se for menor que zero, vai para a esquerda da árvore.
             if (comp < 0) {
+                //Caso o filho esquerdo for nulo, adiciona o novo nó.
                 if (atual.getFilhoEsquerda() == null) {
                     atual.setFilhoEsquerda(novo);
-                } else {
+                } 
+                //Caso contrário, chama de novo o função recursiva de adicionar. 
+                else {
                     atual.setFilhoEsquerda(adicionarRecursivo(atual.getFilhoEsquerda(), novo));
                 }
-            } else {
+            }
+            //Caso contrário, vá para a direita da arvore. 
+            else {
+                //Caso o filho direito for nulo, adiciona o novo nó.
                 if (atual.getFilhoDireita() == null) {
                     atual.setFilhoDireita(novo);
-                } else {
+                }
+                //Caso contrário, chama de novo o função recursiva de adicionar.
+                else {
                     atual.setFilhoDireita(adicionarRecursivo(atual.getFilhoDireita(), novo));
                 }
             }
@@ -200,7 +214,7 @@
 
         @Override
         public int altura() {
-            return this.raiz.obterAltura(); // Retorna a altura calculada da árvore.
+            return this.raiz.obterAltura(); // Retorna a altura calculada da árvore, chamando a função obterAltura() do nó.
         }
 
         @Override
