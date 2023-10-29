@@ -111,7 +111,7 @@
             return valor;
         }
 
-        protected NoArvore<T> removerRecursivo(NoArvore<T> atual, T valor) {
+        protected No<T> removerRecursivo(No<T> atual, T valor) {
             //Caso o nó atual for nula, retorne nulo.
             if (atual == null) {
                 return null;
@@ -152,7 +152,7 @@
             return atual;
         }
 
-        private T encontrarValorMinimo(NoArvore<T> no) {
+        private T encontrarValorMinimo(No<T> no) {
             // Enquanto o no filho a esquerda não for nulo, chame a função de encontrar o valor mínimo.
             if (no.getFilhoEsquerda() != null) {
                 return encontrarValorMinimo(no.getFilhoEsquerda());
