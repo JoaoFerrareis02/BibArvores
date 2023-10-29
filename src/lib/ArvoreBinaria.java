@@ -105,110 +105,59 @@
 
         @Override
         public T remover(T valor) {
+            //Chama a função recursiva.
+            raiz = removerRecursivo(raiz, valor);
+            //Retorna o valor removido.
+            return valor;
+        }
 
-            if (raiz == null) {
-                return null;
-            }
-
-            No<T> pai = null;
-            atual = raiz;
-
-            while (atual != null) {
-                int comparacao = comparador.compare(valor, atual.getValor());
-
-                /*
-                 * Seguinte, aqui é o mesmo esquema que pesquisar, a arvore vai começar a ser
-                 * varrida até encontrar o valor. Uma vez encontrado a var atual vai receber
-                 * o valor e a var pai vai referenciar o nó pai de atual. Então quando,
-                 * comparacao == 0 ele termina o loop de busca já que atual vai ser valor.
-                 */
-                if (comparacao == 0) {
-                    break;
-                } else if (comparacao < 0) {
-                    pai = atual;
-                    atual = atual.getFilhoEsquerda();
-                } else {
-                    pai = atual;
-                    atual = atual.getFilhoDireita();
-                }
-            }
-
+        protected NoArvore<T> removerRecursivo(NoArvore<T> atual, T valor) {
+            //Caso o nó atual for nula, retorne nulo.
             if (atual == null) {
                 return null;
             }
-
-            // Fim da pesquisa. Agora temos que remover o nó, mas caso ele tenha filhos?
-            // Caso 1: Se o nó atual for uma folha (não tem filhos), simplesmente remova-o.
-            if (atual.getFilhoEsquerda() == null && atual.getFilhoDireita() == null) {
-                if (pai == null) { //Se pai é nulo, então atual é raiz.
-                    raiz = null;
-                } else if (atual == pai.getFilhoEsquerda()) { //Se não for, verifica se o nó atual é o filho esquerda ou direita do pai (talvez dê para melhorar já dizendo qual lado do pai é atual. PENSEM!!)
-                    pai.setFilhoEsquerda(null);
-                } else if (atual == pai.getFilhoDireita()) {
-                    pai.setFilhoDireita(null);
-                }
-                return atual.getValor();
+    
+            // Faz a comparacao entre o valor e o valor do nó atual 
+            int comparacao = comparador.compare(valor, atual.getValor());
+    
+            // Se a comparacao for menor que nulo, procure no nó filho a esquerda.
+            if (comparacao < 0) {
+                atual.setFilhoEsquerda(removerRecursivo(atual.getFilhoEsquerda(), valor));
             }
-
-            // Caso 2: Se o nó atual tem um filho (esquerda ou direita).
-            // Se for filho a esquerda:
-            if (atual.getFilhoEsquerda() != null && atual.getFilhoDireita() == null) {
-                if (pai == null) { //Se pai é nulo, então atual é raiz e tem filho a esquerda.
-                    raiz = atual.getFilhoEsquerda();
-                } else if (atual == pai.getFilhoEsquerda()) { //Se não for, verifica se o nó atual é o filho esquerda ou direita do pai.
-                    pai.setFilhoEsquerda(atual.getFilhoEsquerda());
+            // Se for maior que zero, procure no nó filho a direita. 
+            else if (comparacao > 0) {
+                atual.setFilhoDireita(removerRecursivo(atual.getFilhoDireita(), valor));
+            }
+            // Caso encontrou (comparacao = 0) 
+            else {
+                // Nó sem folhas
+                if (atual.getFilhoEsquerda() == null && atual.getFilhoDireita() == null) {
+                    return null;
+                } else if (atual.getFilhoEsquerda() == null) {
+                    // Nó com uma folha (nó filho a direita)
+                    return atual.getFilhoDireita();
+                } else if (atual.getFilhoDireita() == null) {
+                    // Nó com uma folha (nó filho a esquerda)
+                    return atual.getFilhoEsquerda();
                 } else {
-                    pai.setFilhoDireita(atual.getFilhoEsquerda());
+                    // Nó com duas folhas
+                    // Procure o menor valor da sub-arvore
+                    T minValue = encontrarValorMinimo(atual.getFilhoDireita());
+                    atual.setValor(minValue);
+                    // Delete o nó com o menor valor da subárvore a direita.
+                    atual.setFilhoDireita(removerRecursivo(atual.getFilhoDireita(), minValue));
                 }
-                return atual.getValor();
             }
+    
+            return atual;
+        }
 
-            // Se for filho a direita:
-            if (atual.getFilhoDireita() != null && atual.getFilhoEsquerda() == null) {
-                if (pai == null) {
-                    raiz = atual.getFilhoDireita();
-                } else if (atual == pai.getFilhoEsquerda()) {
-                    pai.setFilhoEsquerda(atual.getFilhoDireita());
-                } else {
-                    pai.setFilhoDireita(atual.getFilhoDireita());
-                }
-                return atual.getValor();
+        private T encontrarValorMinimo(NoArvore<T> no) {
+            // Enquanto o no filho a esquerda não for nulo, chame a função de encontrar o valor mínimo.
+            if (no.getFilhoEsquerda() != null) {
+                return encontrarValorMinimo(no.getFilhoEsquerda());
             }
-
-            /*
-             * Caso 3: O nó atual tem dois filhos.
-             * Vamos à lógica:
-             * Para remover um nó com dois filhos, precisamos encontrar um substituto.
-             * Seja escolhendo o lado da direita ou da esquerda.
-             * Vamos à subárvore à esquerda do nó atual para encontrar o substituto.
-             * O substituto será o valor mais à direita nessa subárvore, pois é o próximo
-             * valor mais próximo e maior que pode substituir o nó atual.
-             * Salvamos o pai do substituto, pois o substituto pode ter um filho à esquerda.
-             * Caso tenha um filho à esquerda, o pai do substituto precisa referenciar
-             * esse filho como seu filho à direita.
-             * Após a substituição, atualizamos a estrutura da árvore conforme necessário
-             * e retornamos o valor do substituto.
-             */
-            if (atual.getFilhoEsquerda() != null && atual.getFilhoDireita() != null) {
-
-                No<T> paiSubstituto = atual;
-                No<T> substituto = atual.getFilhoEsquerda();
-
-                while (substituto.getFilhoDireita() != null) {
-                    paiSubstituto = substituto;
-                    substituto = substituto.getFilhoDireita();
-                }
-
-                atual.setValor(substituto.getValor()); // Agora substituto é o nó que deve substituir o nó atual.
-
-                if (paiSubstituto != atual) { // Verificar se o substituto tem filho à esquerda.
-                    paiSubstituto.setFilhoDireita(substituto.getFilhoEsquerda());
-                } else {
-                    atual.setFilhoEsquerda(substituto.getFilhoEsquerda()); // Caso especial: o substituto é filho esquerda do nó atual.
-                }
-                return substituto.getValor();
-            }
-            return null;
+            return no.getValor();
         }
 
 
