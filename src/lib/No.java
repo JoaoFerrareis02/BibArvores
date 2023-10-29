@@ -65,26 +65,25 @@ public class No<T> {
     }
 
     public int obterAltura(){
+        // Retorna a altura do nó chamado
         return obterAltura(this);
     }
 
     private int obterAltura(No<T> r) {
+        //Caso o nó for nulo, retorna -1
         if (r == null) {
             return -1;
         }
         else {
-            int hd = obterAltura(r.getFilhoDireita());
-            int he = obterAltura(r.getFilhoEsquerda());
-            if (hd > he) {
-                return hd + 1;
-            } else {
-                return he + 1;
-            }
+            int hd = obterAltura(r.getFilhoDireita()); //Obtem a altura do  nó filho a direita
+            int he = obterAltura(r.getFilhoEsquerda()); //Obtem a altura do  nó filho a esquera
+            return Math.max(hd,he) + 1; //Retorne o maior entre as alturas + 1
         }
     }
 
     public int fatorBalanceamento(){
-        return obterAltura(this.filhoDireita) - obterAltura(this.filhoEsquerda);
+        //Retorna a subtração entre as alturas do  nó filho a direita com o nó filho a esquerda.
+        return obterAltura(this.filhoDireita) - obterAltura(this.filhoEsquerda); 
     }
     
 }
