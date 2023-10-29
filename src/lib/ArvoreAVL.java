@@ -72,4 +72,27 @@ public class ArvoreAVL<T> extends ArvoreBinaria<T>{
         return raiz;
     }
 
+    /**
+     * Alem de remover recursivamente, ele faz o balanceamento da árvore. 
+     */
+    
+    @Override
+    protected NoArvore<T> removerRecursivo(NoArvore<T> atual, T valor) {
+        raiz = super.removerRecursivo(raiz, valor);
+        if (raiz.fatorBalanceamento() > 1) {
+            if (raiz.getFilhoDireita().fatorBalanceamento() > 0) {
+                raiz = this.rotacaoEsquerda(raiz);
+            } else {
+                raiz = this.rotacaoDireitaEsquerda(raiz);
+            }
+        } else if (raiz.fatorBalanceamento() < -1) {
+            if (raiz.getFilhoEsquerda().fatorBalanceamento() < 0) {
+                raiz = this.rotacaoDireita(raiz);
+            } else {
+                raiz = this.rotacaoEsquerdaDireita(raiz);
+            }
+        }
+        return raiz;
+    }
+
 }
