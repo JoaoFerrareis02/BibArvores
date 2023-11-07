@@ -45,7 +45,7 @@ public class ArvoreAVL<T> extends ArvoreBinaria<T>{
      * Função que faz a rotação a direita do nó filho a direita, apontando para o filho a direita. Após isso, se faz uma rotação a esquerda. 
      * @param r - Nó raiz
      */
-    private No<T> rotacaoDireitaEsquerda(NoArvore<T> r) {
+    private No<T> rotacaoDireitaEsquerda(No<T> r) {
         r.setFilhoDireita(rotacaoDireita(r.getFilhoDireita()));
         return rotacaoEsquerda(r);
     }
